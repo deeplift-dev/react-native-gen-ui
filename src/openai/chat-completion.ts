@@ -243,12 +243,20 @@ export class ChatCompletion {
       messages.push(this.toolRenderResult);
     }
 
+
     if (this.toolCallResult != null) {
-      messages.push({
-        role: 'function',
-        name: this.newToolCall.name,
-        content: JSON.stringify(this.toolCallResult),
-      });
+      if (Array.isArray(this.toolCallResult) && this.toolCallResult.length > 0 && this.toolCallResult[0].type === 'image_url') {
+          messages.push({
+              role: 'user',
+              content: this.toolCallResult,
+          });
+      } else {
+          messages.push({
+              role: 'function',
+              name: this.newToolCall.name,
+              content: JSON.stringify(this.toolCallResult),
+          });
+      }
     }
 
     return messages;
